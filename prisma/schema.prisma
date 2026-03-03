@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String        @id @default(uuid())
+  phone_number  String        @unique
+  password_hash String
+  score         Int           @default(0)
+  coins         Int           @default(0)
+  createdAt     DateTime      @default(now())
+  sessions      GameSession[]
+  @@index([phone_number])
+}
+
+model Otp {
+  id           String   @id @default(uuid())
+  phone_number String
+  code         String
+  expires_at   DateTime
+  created_at   DateTime @default(now())
+  @@index([phone_number])
+}
+
+model GameSession {
+  id         String   @id @default(uuid())
+  userId     String
+  nonce      String   @unique
+  is_used    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  @@index([nonce])
+}
+
+model BonusTransaction {
+  id           String   @id @default(uuid())
+  batch_id     String
+  phone_number String
+  createdAt    DateTime @default(now())
+  @@unique([batch_id, phone_number]) 
+}
+
+model SmsLog {
+  id           String   @id @default(uuid())
+  phone_number String
+  message      String
+  status       SmsStatus @default(QUEUED)
+  createdAt    DateTime  @default(now())
+  @@index([status])
+}
+
+enum SmsStatus {
+  QUEUED
+  DELIVERED
+  FAILED
+}
