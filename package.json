@@ -1,0 +1,32 @@
+{
+  "name": "onboarding-task",
+  "version": "1.0.0",
+  "description": "Objective: Evaluate candidates for the backend developer position based on their proficiency in building high-throughput applications using PostgreSQL, Node.js, and Express, with added features for social media integration and SMS functionality.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YeabTilahun/onboarding-task.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/YeabTilahun/onboarding-task/issues"
+  },
+  "homepage": "https://github.com/YeabTilahun/onboarding-task#readme",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.4.2",
+    "@prisma/client": "^7.4.2",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14",
+    "pg": "^8.19.0"
+  },
+  "devDependencies": {
+    "prisma": "^7.4.2"
+  }
+}
