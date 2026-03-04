@@ -4,6 +4,7 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 const authRoutes = require("./modules/auth/auth.routes");
+const quizRoutes = require("./modules/game/quiz.routes");
 const authMiddleware = require("./modules/middleware/auth.middleware");
 
 const app = express();
@@ -13,14 +14,10 @@ app.get("/", (req, res) => {
   res.send("server running");
 });
 app.use("/auth", authRoutes);
-app.get(
-  "/protected",
-  authMiddleware,
-  (req, res) => {
-    res.json({ message: "Protected route", userId: req.userId });
-  },
-);
-
+app.use("/quiz", authMiddleware, quizRoutes);
+app.get("/protected", authMiddleware, (req, res) => {
+  res.json({ message: "Protected route", userId: req.userId });
+});
 
 const swaggerOptions = {
   definition: {
@@ -32,7 +29,7 @@ const swaggerOptions = {
     },
     servers: [{ url: "http://localhost:3000" }],
   },
-  apis: ["./src/modules/**/*.routes.js", "./src/server.js"], 
+  apis: ["./src/modules/**/*.routes.js", "./src/server.js"],
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);

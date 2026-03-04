@@ -14,11 +14,42 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  phone        String   @unique
+  id           Int           @id @default(autoincrement())
+  phone        String        @unique
   passwordHash String
-  totalScore   Int      @default(0)
-  coins        Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  totalScore   Int           @default(0)
+  coins        Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  quizSessions QuizSession[]
+}
+
+model Question {
+  id               String            @id @default(uuid())
+  text             String
+  options          Json
+  correctAnswer    String
+  createdAt        DateTime          @default(now())
+  questionAttempts QuestionAttempt[]
+}
+
+model QuizSession {
+  id        String            @id @default(uuid())
+  userId    Int
+  user      User              @relation(fields: [userId], references: [id])
+  startedAt DateTime          @default(now())
+  score     Int               @default(0)
+  attempts  QuestionAttempt[]
+}
+
+model QuestionAttempt {
+  id         String  @id @default(uuid())
+  sessionId  String
+  questionId String
+  answered   Boolean @default(false)
+
+  session  QuizSession @relation(fields: [sessionId], references: [id])
+  question Question    @relation(fields: [questionId], references: [id])
+
+  @@unique([sessionId, questionId])
 }
