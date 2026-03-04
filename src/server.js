@@ -2,6 +2,7 @@ require("dotenv/config");
 const express = require("express");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const rateLimit = require("express-rate-limit");
 
 const authRoutes = require("./modules/auth/auth.routes");
 const quizRoutes = require("./modules/game/quiz.routes");
@@ -41,6 +42,18 @@ const swaggerOptions = {
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use("/api", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 500,
+    message: {
+      status: 429,
+      message:
+        "Too many attempts from this IP, please try again after 15 minutes.",
+    },
+  }),
+);
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");

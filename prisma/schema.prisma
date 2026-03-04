@@ -23,6 +23,8 @@ model User {
   updatedAt     DateTime       @updatedAt
   quizSessions  QuizSession[]
   notifications Notification[]
+  @@index([phone])
+  @@index([totalScore])
 }
 
 model Question {
@@ -41,6 +43,7 @@ model QuizSession {
   startedAt DateTime          @default(now())
   score     Int               @default(0)
   attempts  QuestionAttempt[]
+  @@index([userId])
 }
 
 model QuestionAttempt {
@@ -53,6 +56,7 @@ model QuestionAttempt {
   question Question    @relation(fields: [questionId], references: [id])
 
   @@unique([sessionId, questionId])
+  @@index([sessionId])
 }
 
 model Notification {
