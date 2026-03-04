@@ -6,6 +6,7 @@ const swaggerUi = require("swagger-ui-express");
 const authRoutes = require("./modules/auth/auth.routes");
 const quizRoutes = require("./modules/game/quiz.routes");
 const userRoutes = require("./modules/user/user.routes");
+const dashboardRoutes = require("./modules/dashboard/dahboard.routes");
 
 const authMiddleware = require("./modules/middleware/auth.middleware");
 
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/quiz", authMiddleware, quizRoutes);
 app.use("/user", userRoutes);
+app.use("/dashboard", dashboardRoutes);
 
 app.get("/protected", authMiddleware, (req, res) => {
   res.json({ message: "Protected route", userId: req.userId });
