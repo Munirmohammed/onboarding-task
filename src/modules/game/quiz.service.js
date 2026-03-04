@@ -1,4 +1,4 @@
-const { options } = require("../auth/auth.routes");
+const { notificationQueue } = require("../notification.queue");
 const prisma = require("../prisma");
 
 async function startQuiz(userId) {
@@ -7,7 +7,12 @@ async function startQuiz(userId) {
 }
 
 async function getQuestion(sessionId) {
-  const question = await prisma.question.findFirst();
+  const totalQuestions = await prisma.question.count();
+  const randomIndex = Math.floor(Math.random() * totalQuestions);
+
+  const question = await prisma.question.findFirst({
+    skip: randomIndex,
+  });
   if (!question) {
     throw new Error("No questions available");
   }
@@ -41,16 +46,18 @@ async function submitAnswer(sessionId, questionId, answer) {
       throw new Error("Question already answered");
     }
     const isCorrect = attempt.question.correctAnswer === answer;
+    let newTotalScore;
     if (isCorrect) {
       await tx.quizSession.update({
         where: { id: sessionId },
         data: { score: { increment: 10 } },
       });
 
-      await tx.user.update({
+      const updatedUser = await tx.user.update({
         where: { id: attempt.session.userId },
         data: { totalScore: { increment: 10 } },
       });
+      newTotalScore = updatedUser.totalScore;
 
       await tx.questionAttempt.update({
         where: {
@@ -61,6 +68,22 @@ async function submitAnswer(sessionId, questionId, answer) {
         },
         data: { answered: true },
       });
+      if (isCorrect && newTotalScore) {
+        await notificationQueue.add(
+          "sendScoreNotification",
+          {
+            userId: attempt.session.userId,
+            score: newTotalScore,
+          },
+          {
+            attempts: 3,
+            backoff: {
+              type: "exponential",
+              delay: 2000,
+            },
+          },
+        );
+      }
     }
     return { correct: isCorrect };
   });
