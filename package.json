@@ -28,7 +28,8 @@
     "nodemon": "^3.1.14",
     "pg": "^8.19.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "twilio": "^5.12.2"
   },
   "devDependencies": {
     "prisma": "^7.4.2"

@@ -5,6 +5,8 @@ const swaggerUi = require("swagger-ui-express");
 
 const authRoutes = require("./modules/auth/auth.routes");
 const quizRoutes = require("./modules/game/quiz.routes");
+const userRoutes = require("./modules/user/user.routes");
+
 const authMiddleware = require("./modules/middleware/auth.middleware");
 
 const app = express();
@@ -13,8 +15,11 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("server running");
 });
+
 app.use("/auth", authRoutes);
 app.use("/quiz", authMiddleware, quizRoutes);
+app.use("/user", userRoutes);
+
 app.get("/protected", authMiddleware, (req, res) => {
   res.json({ message: "Protected route", userId: req.userId });
 });
