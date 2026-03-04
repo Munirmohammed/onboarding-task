@@ -16,8 +16,9 @@ datasource db {
 model User {
   id           Int      @id @default(autoincrement())
   phone        String   @unique
-  password     String
+  passwordHash String
   totalScore   Int      @default(0)
   coins        Int      @default(0)
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
